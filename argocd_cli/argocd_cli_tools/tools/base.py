@@ -60,7 +60,8 @@ fi
             args=args or [],
             image=image,
             icon_url=ARGOCD_CLI_ICON_URL,
-            type="docker"
+            type="docker",
+            secrets=["ARGOCD_AUTH_TOKEN", "ARGOCD_SERVER"]
         )
 
     def get_args(self) -> List[Arg]:
