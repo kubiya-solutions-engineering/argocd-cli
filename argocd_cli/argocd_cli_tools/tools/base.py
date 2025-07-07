@@ -32,15 +32,6 @@ classDiagram
 class ArgoCDCLITool(Tool):
     """Base class for all ArgoCD CLI tools."""
     
-    name: str
-    description: str
-    content: str = ""
-    args: List[Arg] = []
-    image: str = "argoproj/argocd:latest"
-    icon_url: str = ARGOCD_CLI_ICON_URL
-    type: str = "docker"
-    mermaid: str = DEFAULT_MERMAID
-    
     def __init__(self, name, description, content, args=None, image="argoproj/argocd:latest"):
         content = content
         
