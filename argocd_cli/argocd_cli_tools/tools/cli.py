@@ -44,7 +44,7 @@ class CLITools:
             argocd $command
             """,
             args=[
-                Arg(name="command", description="The command to pass to the ArgoCD CLI (e.g., 'app list', 'project create my-project')", required=True)
+                Arg(name="command", type="str", description="The command to pass to the ArgoCD CLI (e.g., 'app list', 'project create my-project')", required=True)
             ],
             image="argoproj/argocd:latest"
         )
