@@ -33,18 +33,36 @@ class ArgoCDCLITool(Tool):
     """Base class for all ArgoCD CLI tools."""
     
     def __init__(self, name, description, content, args=None, image="argoproj/argocd:latest"):
-        content = content
+        # Set up ArgoCD authentication context
+        inject_argocd_context = """
+set -eu
+# Set up ArgoCD server and authentication
+if [ -n "$ARGOCD_SERVER" ]; then
+    export ARGOCD_SERVER="$ARGOCD_SERVER"
+else
+    echo "Error: ARGOCD_SERVER environment variable is required"
+    exit 1
+fi
+
+if [ -n "$ARGOCD_AUTH_TOKEN" ]; then
+    export ARGOCD_AUTH_TOKEN="$ARGOCD_AUTH_TOKEN"
+else
+    echo "Error: ARGOCD_AUTH_TOKEN environment variable is required"
+    exit 1
+fi
+"""
+        full_content = f"{inject_argocd_context}\n{content}"
         
         super().__init__(
             name=name,
             description=description,
-            content=content,
+            content=full_content,
             args=args or [],
             image=image,
             icon_url=ARGOCD_CLI_ICON_URL,
             type="docker",
-            secrets=["ARGOCD_AUTH_TOKEN"],
-            env=["ARGOCD_SERVER"]
+            env=["ARGOCD_SERVER"],
+            secrets=["ARGOCD_AUTH_TOKEN"]
         )
 
     def get_args(self) -> List[Arg]:
