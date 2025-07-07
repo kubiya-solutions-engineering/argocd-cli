@@ -1,6 +1,6 @@
-from typing import List
 import sys
-from .base import ArgoCDCLITool, Arg
+from .base import ArgoCDCLITool
+from kubiya_sdk.tools import Arg
 from kubiya_sdk.tools.registry import tool_registry
 
 class CLITools:

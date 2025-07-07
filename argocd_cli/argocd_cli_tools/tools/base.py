@@ -1,5 +1,5 @@
 from typing import List, Optional, Dict, Any
-from kubiya_sdk.tools import Tool, Arg, FileSpec
+from kubiya_sdk.tools import Tool, Arg
 
 ARGOCD_CLI_ICON_URL = "https://argo-cd.readthedocs.io/en/stable/assets/logo.png"
 
