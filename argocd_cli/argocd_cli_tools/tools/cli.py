@@ -1,52 +1,41 @@
-import sys
-from .base import ArgoCDCLITool
 from kubiya_sdk.tools import Arg
+from .base import ArgoCDCLITool
 from kubiya_sdk.tools.registry import tool_registry
 
-class CLITools:
-    """ArgoCD CLI wrapper tools."""
+argocd_cli_tool = ArgoCDCLITool(
+    name="argocd_cli_command",
+    description="Execute any ArgoCD CLI command",
+    content="""
+    #!/bin/bash
+    set -e
 
-    def __init__(self):
-        """Initialize and register all ArgoCD CLI tools."""
-        try:
-            tools = [
-                self.run_cli_command()
-            ]
-            
-            for tool in tools:
-                try:
-                    tool_registry.register("argocd_cli", tool)
-                    print(f"✅ Registered: {tool.name}")
-                except Exception as e:
-                    print(f"❌ Failed to register {tool.name}: {str(e)}", file=sys.stderr)
-                    raise
-        except Exception as e:
-            print(f"❌ Failed to register ArgoCD CLI tools: {str(e)}", file=sys.stderr)
-            raise
+    # Validate required parameters
+    if [ -z "$command" ]; then
+        echo "Error: Command is required"
+        exit 1
+    fi
+    
+    echo "=== Executing ArgoCD CLI Command ==="
+    echo "Command: argocd $command"
+    echo ""
+    
+    # Execute the command
+    if eval "argocd $command"; then
+        echo "✅ Command executed successfully"
+    else
+        echo "❌ Command failed: argocd $command"
+        exit 1
+    fi
+    """,
+    args=[
+        Arg(
+            name="command", 
+            type="str", 
+            description="The command to pass to the ArgoCD CLI (e.g., 'app list', 'project create my-project')",
+            required=True
+        ),
+    ],
+    image="argoproj/argocd:latest"
+)
 
-    def run_cli_command(self) -> ArgoCDCLITool:
-        """Execute an ArgoCD CLI command."""
-        return ArgoCDCLITool(
-            name="argocd_cli_command",
-            description="Execute any ArgoCD CLI command",
-            content="""
-            # Validate required parameters
-            if [ -z "$command" ]; then
-                echo "Error: Command is required"
-                exit 1
-            fi
-            
-            echo "=== Executing ArgoCD CLI Command ==="
-            echo "Command: argocd $command"
-            echo ""
-            
-            # Execute the command
-            argocd $command
-            """,
-            args=[
-                Arg(name="command", type="str", description="The command to pass to the ArgoCD CLI (e.g., 'app list', 'project create my-project')", required=True)
-            ],
-            image="argoproj/argocd:latest"
-        )
-
-CLITools() 
+tool_registry.register("argocd_cli", argocd_cli_tool) 
