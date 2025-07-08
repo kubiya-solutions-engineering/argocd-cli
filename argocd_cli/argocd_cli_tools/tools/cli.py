@@ -26,7 +26,9 @@ argocd_cli_tool = ArgoCDCLITool(
     
     echo "=== ArgoCD CLI Authentication ==="
     echo "Server: $ARGOCD_SERVER"
-    echo "Token: ${ARGOCD_AUTH_TOKEN:0:10}... (truncated for security)"
+    # Use cut instead of bash string slicing for better compatibility
+    token_preview=$(echo "$ARGOCD_AUTH_TOKEN" | cut -c1-10)
+    echo "Token: ${token_preview}... (truncated for security)"
     echo ""
     
     # Test basic connectivity
