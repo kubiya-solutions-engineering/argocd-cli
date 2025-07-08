@@ -15,6 +15,20 @@ argocd_cli_tool = ArgoCDCLITool(
         exit 1
     fi
     
+    echo "=== ArgoCD CLI Authentication ==="
+    echo "Server: $ARGOCD_SERVER"
+    echo ""
+    
+    # Perform ArgoCD login to initialize context and trust settings
+    echo "Logging into ArgoCD server..."
+    if argocd login "$ARGOCD_SERVER" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure; then
+        echo "✅ Successfully logged into ArgoCD"
+    else
+        echo "❌ Failed to login to ArgoCD"
+        exit 1
+    fi
+    
+    echo ""
     echo "=== Executing ArgoCD CLI Command ==="
     echo "Command: argocd $command"
     echo ""
