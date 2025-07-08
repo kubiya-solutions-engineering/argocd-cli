@@ -24,19 +24,6 @@ argocd_cli_tool = ArgoCDCLITool(
     echo "Hostname: $(hostname)"
     echo ""
     
-    # Validate required environment variables
-    if [ -z "$ARGOCD_SERVER" ]; then
-        echo "❌ Error: ARGOCD_SERVER environment variable is not set"
-        echo "Available environment variables:"
-        env | grep -i argocd || echo "No ArgoCD-related environment variables found"
-        exit 1
-    fi
-    
-    if [ -z "$ARGOCD_AUTH_TOKEN" ]; then
-        echo "❌ Error: ARGOCD_AUTH_TOKEN environment variable is not set"
-        exit 1
-    fi
-    
     echo "=== ArgoCD CLI Authentication ==="
     echo "Server: $ARGOCD_SERVER"
     echo "Token: ${ARGOCD_AUTH_TOKEN:0:10}... (truncated for security)"
