@@ -27,14 +27,19 @@ argocd_cli_tool = ArgoCDCLITool(
     echo "SERVER_URL: $SERVER_URL"
     echo ""
     
-    # Perform ArgoCD login
-    echo "=== ArgoCD Login ==="
-    argocd login "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure --grpc-web
+    # Set ArgoCD CLI environment variables for authentication
+    export ARGOCD_SERVER="$SERVER_URL"
+    export ARGOCD_AUTH_TOKEN="$ARGOCD_AUTH_TOKEN"
+    export ARGOCD_OPTS="--grpc-web --insecure"
+    
+    echo "=== ArgoCD Configuration ==="
+    echo "Using server: $ARGOCD_SERVER"
+    echo "Using options: $ARGOCD_OPTS"
     echo ""
     
-    # Execute the command
+    # Execute the command directly (no explicit login needed with auth token)
     echo "=== Executing Command ==="
-    argocd $command
+    argocd $command --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure
     """,
     args=[
         Arg(
