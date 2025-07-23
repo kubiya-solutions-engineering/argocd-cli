@@ -41,7 +41,8 @@ class ArgoCDCLITool(Tool):
             image=image,
             icon_url=ARGOCD_CLI_ICON_URL,
             type="docker",
-            secrets=["ARGOCD_AUTH_TOKEN"]
+            secrets=["ARGOCD_AUTH_TOKEN"],
+            env=["ARGOCD_SERVER"]
         )
 
     def get_args(self) -> List[Arg]:
