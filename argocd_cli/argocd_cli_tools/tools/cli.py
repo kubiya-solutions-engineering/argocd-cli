@@ -20,9 +20,16 @@ argocd_cli_tool = ArgoCDCLITool(
     echo "ARGOCD_AUTH_TOKEN: $ARGOCD_AUTH_TOKEN"
     echo ""
     
+    # Strip protocol from server URL if present
+    SERVER_URL="${ARGOCD_SERVER#https://}"
+    SERVER_URL="${SERVER_URL#http://}"
+    echo "=== Processed Server URL ==="
+    echo "SERVER_URL: $SERVER_URL"
+    echo ""
+    
     # Perform ArgoCD login
     echo "=== ArgoCD Login ==="
-    argocd login "$ARGOCD_SERVER" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure
+    argocd login "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure
     echo ""
     
     # Execute the command
