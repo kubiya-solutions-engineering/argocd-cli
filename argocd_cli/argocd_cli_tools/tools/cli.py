@@ -29,7 +29,7 @@ argocd_cli_tool = ArgoCDCLITool(
     
     # Perform ArgoCD login
     echo "=== ArgoCD Login ==="
-    argocd login "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure
+    argocd login "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --insecure --grpc-web
     echo ""
     
     # Execute the command
