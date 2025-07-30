@@ -70,6 +70,7 @@ argocd_app_get_tool = ArgoCDCLITool(
     
     echo "Getting application details for: $FULL_APP_NAME"
     echo "Server: $SERVER_URL"
+    echo "Executing: argocd app get \"$FULL_APP_NAME\" --server \"$SERVER_URL\" --auth-token \"***\" --grpc-web --insecure"
     echo ""
     
     # Execute the app get command with the prefixed name
