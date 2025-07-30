@@ -19,11 +19,6 @@ argocd_cli_tool = ArgoCDCLITool(
     SERVER_URL="${ARGOCD_SERVER#https://}"
     SERVER_URL="${SERVER_URL#http://}"
     
-    # Set ArgoCD CLI environment variables for authentication
-    export ARGOCD_SERVER="$SERVER_URL"
-    export ARGOCD_AUTH_TOKEN="$ARGOCD_AUTH_TOKEN"
-    export ARGOCD_OPTS="--grpc-web --insecure"
-    
     echo "Executing: argocd $command"
     echo "Server: $SERVER_URL"
     echo ""
@@ -60,17 +55,12 @@ argocd_app_get_tool = ArgoCDCLITool(
     SERVER_URL="${ARGOCD_SERVER#https://}"
     SERVER_URL="${SERVER_URL#http://}"
     
-    # Set ArgoCD CLI environment variables for authentication
-    export ARGOCD_SERVER="$SERVER_URL"
-    export ARGOCD_AUTH_TOKEN="$ARGOCD_AUTH_TOKEN"
-    export ARGOCD_OPTS="--grpc-web --insecure"
-    
     # Automatically prepend "argocd/" to the application name
     FULL_APP_NAME="argocd/$app_name"
     
     echo "Getting application details for: $FULL_APP_NAME"
     echo "Server: $SERVER_URL"
-    echo "Executing: argocd app get \"$FULL_APP_NAME\" --server \"$SERVER_URL\" --auth-token \"***\" --grpc-web --insecure"
+    echo "Executing: argocd app get \"$FULL_APP_NAME\" --server \"$SERVER_URL\" --auth-token \"$ARGOCD_AUTH_TOKEN\" --grpc-web --insecure"
     echo ""
     
     # Execute the app get command with the prefixed name
@@ -98,11 +88,6 @@ argocd_app_list_tool = ArgoCDCLITool(
     # Strip protocol from server URL if present
     SERVER_URL="${ARGOCD_SERVER#https://}"
     SERVER_URL="${SERVER_URL#http://}"
-    
-    # Set ArgoCD CLI environment variables for authentication
-    export ARGOCD_SERVER="$SERVER_URL"
-    export ARGOCD_AUTH_TOKEN="$ARGOCD_AUTH_TOKEN"
-    export ARGOCD_OPTS="--grpc-web --insecure"
     
     echo "Listing ArgoCD applications..."
     echo "Server: $SERVER_URL"
