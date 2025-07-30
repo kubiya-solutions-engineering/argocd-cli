@@ -40,7 +40,7 @@ argocd_cli_tool = ArgoCDCLITool(
 # ArgoCD App Get Tool - automatically prepends "argocd/" to application names
 argocd_app_get_tool = ArgoCDCLITool(
     name="argocd_app_get",
-    description="Get detailed information about a specific ArgoCD application (automatically prepends 'argocd/' to app name)",
+    description="Get detailed information about a specific ArgoCD application (tries with 'argocd/' prefix first, then without)",
     content="""
     #!/bin/bash
     set -e
@@ -55,22 +55,32 @@ argocd_app_get_tool = ArgoCDCLITool(
     SERVER_URL="${ARGOCD_SERVER#https://}"
     SERVER_URL="${SERVER_URL#http://}"
     
-    # Automatically prepend "argocd/" to the application name
+    # Try with "argocd/" prefix first
     FULL_APP_NAME="argocd/$app_name"
     
-    echo "Getting application details for: $FULL_APP_NAME"
+    echo "Getting application details for: $app_name"
     echo "Server: $SERVER_URL"
-    echo "Executing: argocd app get \"$FULL_APP_NAME\" --server \"$SERVER_URL\" --auth-token \"***\" --grpc-web --insecure"
     echo ""
     
-    # Execute the app get command with the prefixed name
-    argocd app get "$FULL_APP_NAME" --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure
+    echo "Trying with prefix: $FULL_APP_NAME"
+    if argocd app get "$FULL_APP_NAME" --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure 2>/dev/null; then
+        echo "✅ Success with argocd/ prefix"
+    else
+        echo "❌ Failed with argocd/ prefix, trying without prefix..."
+        echo "Trying without prefix: $app_name"
+        if argocd app get "$app_name" --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure; then
+            echo "✅ Success without prefix"
+        else
+            echo "❌ Failed both with and without argocd/ prefix"
+            exit 1
+        fi
+    fi
     """,
     args=[
         Arg(
             name="app_name", 
             type="str", 
-            description="The application name (without 'argocd/' prefix - it will be added automatically)",
+            description="The application name (will try with 'argocd/' prefix first, then without if that fails)",
             required=True
         ),
     ],
