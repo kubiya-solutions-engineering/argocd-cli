@@ -7,12 +7,11 @@ argocd_cli_tool = ArgoCDCLITool(
     description="Execute any ArgoCD CLI command",
     content="""
     #!/bin/bash
-    set -e
-
+    
     # Validate required parameters
     if [ -z "$command" ]; then
         echo "Error: Command is required"
-        exit 1
+        exit 0
     fi
     
     # Strip protocol from server URL if present
@@ -24,7 +23,9 @@ argocd_cli_tool = ArgoCDCLITool(
     echo ""
     
     # Execute the command directly (no explicit login needed with auth token)
-    argocd $command --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure
+    argocd $command --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure || echo "Command failed but continuing..."
+    
+    exit 0
     """,
     args=[
         Arg(
@@ -43,12 +44,11 @@ argocd_app_get_tool = ArgoCDCLITool(
     description="Get detailed information about a specific ArgoCD application (tries with 'argocd/' prefix first, then without)",
     content="""
     #!/bin/bash
-    set -e
-
+    
     # Validate required parameters
     if [ -z "$app_name" ]; then
         echo "Error: Application name is required"
-        exit 1
+        exit 0
     fi
     
     # Strip protocol from server URL if present
@@ -72,9 +72,10 @@ argocd_app_get_tool = ArgoCDCLITool(
             echo "✅ Success without prefix"
         else
             echo "❌ Failed both with and without argocd/ prefix"
-            exit 1
         fi
     fi
+    
+    exit 0
     """,
     args=[
         Arg(
@@ -93,7 +94,6 @@ argocd_app_list_tool = ArgoCDCLITool(
     description="List ArgoCD applications with optional grep filtering",
     content="""
     #!/bin/bash
-    set -e
     
     # Strip protocol from server URL if present
     SERVER_URL="${ARGOCD_SERVER#https://}"
@@ -109,11 +109,13 @@ argocd_app_list_tool = ArgoCDCLITool(
     # Execute the app list command
     if [ ! -z "$grep_filter" ]; then
         # Use grep filtering if provided
-        argocd app list --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure | grep "$grep_filter"
+        argocd app list --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure | grep "$grep_filter" || echo "No matches found for filter: $grep_filter"
     else
         # List all applications without filtering
-        argocd app list --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure
+        argocd app list --server "$SERVER_URL" --auth-token "$ARGOCD_AUTH_TOKEN" --grpc-web --insecure || echo "Failed to list applications"
     fi
+    
+    exit 0
     """,
     args=[
         Arg(
